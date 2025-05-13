@@ -1,0 +1,124 @@
+name: Test and Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js ⚙️
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Dependencies 📦
+        run: npm ci
+
+      - name: Run Linting 🧹
+        run: npm run lint
+
+      - name: Run Tests 🧪
+        run: npm run test:ci
+        env:
+          ENCRYPTION_KEY: test-encryption-key-for-ci
+          NEXT_PUBLIC_ENCRYPTION_VERSION: "2.0"
+          NEXT_PUBLIC_ENABLE_ENCRYPTION: "true"
+
+  build-and-deploy:
+    name: Build and Deploy
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js ⚙️
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Dependencies 📦
+        run: npm ci
+
+      - name: Build Application 🏗️
+        run: npm run build
+        env:
+          NEXT_PUBLIC_ENV: production
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          NEXT_PUBLIC_ENABLE_ENCRYPTION: "true"
+          NEXT_PUBLIC_ENCRYPTION_VERSION: "2.0"
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY || 'form-app-secret-key-2023-improved-security' }}
+          NEXT_PUBLIC_AUTH_SECRET: ${{ secrets.AUTH_SECRET || 'auth-secret-key-change-in-production' }}
+          NEXT_PUBLIC_ENABLE_ANALYTICS: "true"
+          NEXT_PUBLIC_DEBUG_MODE: "false"
+          NEXT_PUBLIC_ENABLE_LOCATION: "true"
+          NEXT_PUBLIC_ENABLE_RATINGS: "true"
+          NEXT_PUBLIC_STORAGE_PREFIX: "form-app"
+          NEXT_PUBLIC_MAP_PROVIDER: "leaflet"
+          NEXT_PUBLIC_AUTH_PROVIDER: "google"
+          NEXT_PUBLIC_MOCK_DATA: "true"
+          NEXT_PUBLIC_API_URL: "https://api.example.com"
+
+      - name: Deploy to GitHub Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: out
+          branch: gh-pages
+          clean: true
+
+  preview:
+    name: Preview Deployment
+    needs: test
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js ⚙️
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Dependencies 📦
+        run: npm ci
+
+      - name: Build Application 🏗️
+        run: npm run build
+        env:
+          NEXT_PUBLIC_ENV: development
+          NEXT_PUBLIC_BASE_PATH: ""
+          NEXT_PUBLIC_ENABLE_ENCRYPTION: "true"
+          NEXT_PUBLIC_ENCRYPTION_VERSION: "2.0"
+          ENCRYPTION_KEY: "preview-encryption-key"
+          NEXT_PUBLIC_AUTH_SECRET: "preview-auth-secret"
+          NEXT_PUBLIC_DEBUG_MODE: "true"
+          NEXT_PUBLIC_ENABLE_LOCATION: "true"
+          NEXT_PUBLIC_ENABLE_RATINGS: "true"
+          NEXT_PUBLIC_STORAGE_PREFIX: "form-app-preview"
+          NEXT_PUBLIC_MAP_PROVIDER: "leaflet"
+          NEXT_PUBLIC_AUTH_PROVIDER: "google"
+          NEXT_PUBLIC_MOCK_DATA: "true"
+          NEXT_PUBLIC_API_URL: "https://api.example.com"
+
+      - name: Archive Build Artifact 📁
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-output
+          path: out/
+          retention-days: 5

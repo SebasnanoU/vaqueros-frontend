@@ -1,0 +1,50 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js ⚙️
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Dependencies 📦
+        run: npm ci
+
+      - name: Build Application 🏗️
+        run: npm run build
+        env:
+          NEXT_PUBLIC_ENV: production
+          NEXT_PUBLIC_BASE_PATH: ""
+          NEXT_PUBLIC_ENABLE_ENCRYPTION: "true"
+          NEXT_PUBLIC_ENCRYPTION_VERSION: "2.0"
+          ENCRYPTION_KEY: "lighthouse-test-key"
+          NEXT_PUBLIC_AUTH_SECRET: "lighthouse-auth-key"
+          NEXT_PUBLIC_ENABLE_ANALYTICS: "false"
+          NEXT_PUBLIC_DEBUG_MODE: "false"
+          NEXT_PUBLIC_ENABLE_LOCATION: "true"
+          NEXT_PUBLIC_ENABLE_RATINGS: "true"
+          NEXT_PUBLIC_STORAGE_PREFIX: "form-app"
+          NEXT_PUBLIC_MAP_PROVIDER: "leaflet"
+          NEXT_PUBLIC_AUTH_PROVIDER: "google"
+          NEXT_PUBLIC_MOCK_DATA: "true"
+          NEXT_PUBLIC_API_URL: "https://api.example.com"
+
+      - name: Run Lighthouse CI 🚦
+        uses: treosh/lighthouse-ci-action@v9
+        with:
+          configPath: './.github/lighthouse/lighthouserc.js'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
