@@ -1,6 +1,6 @@
-# Formulario de Relaciones - Preact Version
+# Formulario de Relaciones - Preact + Vite
 
-Este proyecto es una aplicación de formulario construida con Next.js y Preact. Utiliza Preact como una alternativa ligera a React para mejorar el rendimiento y reducir el tamaño del bundle.
+Este proyecto es una aplicación de formulario construida con Preact y Vite. Preact se utiliza como una alternativa ligera a React para mejorar el rendimiento y reducir el tamaño del bundle.
 
 [![Test and Deploy to GitHub Pages](https://github.com/tu-usuario/tu-repositorio/actions/workflows/deploy.yml/badge.svg)](https://github.com/tu-usuario/tu-repositorio/actions/workflows/deploy.yml)
 [![Lighthouse CI](https://github.com/tu-usuario/tu-repositorio/actions/workflows/lighthouse.yml/badge.svg)](https://github.com/tu-usuario/tu-repositorio/actions/workflows/lighthouse.yml)
@@ -8,7 +8,7 @@ Este proyecto es una aplicación de formulario construida con Next.js y Preact. 
 ## Características
 
 - Formulario multi-paso para registrar información sobre parejas, planes y encuentros
-- Autenticación simulada con Google
+- Autenticación con Google mediante OAuth
 - Selección de ubicación con mapas interactivos
 - Almacenamiento local para persistencia de datos
 - Cifrado de extremo a extremo para datos sensibles
@@ -17,7 +17,7 @@ Este proyecto es una aplicación de formulario construida con Next.js y Preact. 
 
 ## Tecnologías
 
-- Next.js 14
+- Vite
 - Preact 10 (en lugar de React)
 - Tailwind CSS
 - Leaflet para mapas
@@ -84,24 +84,24 @@ Para configurar el despliegue en tu propio repositorio:
 - **Ideal para aplicaciones estáticas**: Perfecto para despliegues en GitHub Pages
 
 ## Configuración
+El proyecto utiliza Vite junto con `@preact/preset-vite` para habilitar Preact de forma transparente:
 
-El proyecto está configurado para usar Preact en lugar de React mediante alias en webpack:
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+import preact from '@preact/preset-vite'
+import path from 'node:path'
 
-\`\`\`javascript
-// next.config.mjs
-webpack: (config, { dev, isServer }) => {
-  // Reemplazar React con Preact
-  if (!dev && !isServer) {
-    Object.assign(config.resolve.alias, {
-      'react': 'preact/compat',
-      'react-dom/test-utils': 'preact/test-utils',
-      'react-dom': 'preact/compat',
-      'react/jsx-runtime': 'preact/jsx-runtime'
-    });
+export default defineConfig({
+  plugins: [preact()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './')
+    }
   }
-  return config;
-}
-\`\`\`
+})
+```
+
 
 ## Seguridad
 

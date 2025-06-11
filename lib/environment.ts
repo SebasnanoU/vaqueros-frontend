@@ -21,57 +21,57 @@ interface EnvironmentConfig {
 // Configuraciones por ambiente
 const environmentConfigs: Record<Environment, EnvironmentConfig> = {
   development: {
-    apiUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api",
-    mockData: process.env.NEXT_PUBLIC_MOCK_DATA === "true",
-    debug: process.env.NEXT_PUBLIC_DEBUG_MODE === "true",
-    analyticsEnabled: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true",
-    storagePrefix: process.env.NEXT_PUBLIC_STORAGE_PREFIX || "form-app-dev",
-    basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
-    mapProvider: process.env.NEXT_PUBLIC_MAP_PROVIDER || "leaflet",
-    enableLocation: process.env.NEXT_PUBLIC_ENABLE_LOCATION === "true",
-    enableRatings: process.env.NEXT_PUBLIC_ENABLE_RATINGS === "true",
-    authProvider: process.env.NEXT_PUBLIC_AUTH_PROVIDER || "google",
-    authSecret: process.env.NEXT_PUBLIC_AUTH_SECRET || "dev-secret-key",
-    encryptionEnabled: process.env.NEXT_PUBLIC_ENABLE_ENCRYPTION !== "false",
-    encryptionVersion: process.env.NEXT_PUBLIC_ENCRYPTION_VERSION || "2.0",
+    apiUrl: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
+    mockData: import.meta.env.VITE_MOCK_DATA === "true",
+    debug: import.meta.env.VITE_DEBUG_MODE === "true",
+    analyticsEnabled: import.meta.env.VITE_ENABLE_ANALYTICS === "true",
+    storagePrefix: import.meta.env.VITE_STORAGE_PREFIX || "form-app-dev",
+    basePath: import.meta.env.VITE_BASE_PATH || "",
+    mapProvider: import.meta.env.VITE_MAP_PROVIDER || "leaflet",
+    enableLocation: import.meta.env.VITE_ENABLE_LOCATION === "true",
+    enableRatings: import.meta.env.VITE_ENABLE_RATINGS === "true",
+    authProvider: import.meta.env.VITE_AUTH_PROVIDER || "google",
+    authSecret: import.meta.env.VITE_AUTH_SECRET || "dev-secret-key",
+    encryptionEnabled: import.meta.env.VITE_ENABLE_ENCRYPTION !== "false",
+    encryptionVersion: import.meta.env.VITE_ENCRYPTION_VERSION || "2.0",
   },
   quality: {
-    apiUrl: process.env.NEXT_PUBLIC_API_URL || "https://qa-api.example.com",
-    mockData: process.env.NEXT_PUBLIC_MOCK_DATA === "true",
-    debug: process.env.NEXT_PUBLIC_DEBUG_MODE === "true",
-    analyticsEnabled: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true",
-    storagePrefix: process.env.NEXT_PUBLIC_STORAGE_PREFIX || "form-app-qa",
-    basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
-    mapProvider: process.env.NEXT_PUBLIC_MAP_PROVIDER || "leaflet",
-    enableLocation: process.env.NEXT_PUBLIC_ENABLE_LOCATION === "true",
-    enableRatings: process.env.NEXT_PUBLIC_ENABLE_RATINGS === "true",
-    authProvider: process.env.NEXT_PUBLIC_AUTH_PROVIDER || "google",
-    authSecret: process.env.NEXT_PUBLIC_AUTH_SECRET || "qa-secret-key",
-    encryptionEnabled: process.env.NEXT_PUBLIC_ENABLE_ENCRYPTION !== "false",
-    encryptionVersion: process.env.NEXT_PUBLIC_ENCRYPTION_VERSION || "2.0",
+    apiUrl: import.meta.env.VITE_API_URL || "https://qa-api.example.com",
+    mockData: import.meta.env.VITE_MOCK_DATA === "true",
+    debug: import.meta.env.VITE_DEBUG_MODE === "true",
+    analyticsEnabled: import.meta.env.VITE_ENABLE_ANALYTICS === "true",
+    storagePrefix: import.meta.env.VITE_STORAGE_PREFIX || "form-app-qa",
+    basePath: import.meta.env.VITE_BASE_PATH || "",
+    mapProvider: import.meta.env.VITE_MAP_PROVIDER || "leaflet",
+    enableLocation: import.meta.env.VITE_ENABLE_LOCATION === "true",
+    enableRatings: import.meta.env.VITE_ENABLE_RATINGS === "true",
+    authProvider: import.meta.env.VITE_AUTH_PROVIDER || "google",
+    authSecret: import.meta.env.VITE_AUTH_SECRET || "qa-secret-key",
+    encryptionEnabled: import.meta.env.VITE_ENABLE_ENCRYPTION !== "false",
+    encryptionVersion: import.meta.env.VITE_ENCRYPTION_VERSION || "2.0",
   },
   production: {
-    apiUrl: process.env.NEXT_PUBLIC_API_URL || "https://api.example.com",
+    apiUrl: import.meta.env.VITE_API_URL || "https://api.example.com",
     mockData: false,
     debug: false,
     analyticsEnabled: true,
-    storagePrefix: process.env.NEXT_PUBLIC_STORAGE_PREFIX || "form-app",
-    basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
-    mapProvider: process.env.NEXT_PUBLIC_MAP_PROVIDER || "leaflet",
-    enableLocation: process.env.NEXT_PUBLIC_ENABLE_LOCATION !== "false",
-    enableRatings: process.env.NEXT_PUBLIC_ENABLE_RATINGS !== "false",
-    authProvider: process.env.NEXT_PUBLIC_AUTH_PROVIDER || "google",
-    authSecret: process.env.NEXT_PUBLIC_AUTH_SECRET || "",
+    storagePrefix: import.meta.env.VITE_STORAGE_PREFIX || "form-app",
+    basePath: import.meta.env.VITE_BASE_PATH || "",
+    mapProvider: import.meta.env.VITE_MAP_PROVIDER || "leaflet",
+    enableLocation: import.meta.env.VITE_ENABLE_LOCATION !== "false",
+    enableRatings: import.meta.env.VITE_ENABLE_RATINGS !== "false",
+    authProvider: import.meta.env.VITE_AUTH_PROVIDER || "google",
+    authSecret: import.meta.env.VITE_AUTH_SECRET || "",
     encryptionEnabled: true,
-    encryptionVersion: process.env.NEXT_PUBLIC_ENCRYPTION_VERSION || "2.0",
+    encryptionVersion: import.meta.env.VITE_ENCRYPTION_VERSION || "2.0",
   },
 }
 
 // Determina el ambiente actual basado en la URL o variables de entorno
 export function getCurrentEnvironment(): Environment {
   // Verificar primero la variable de entorno
-  if (process.env.NEXT_PUBLIC_ENV) {
-    const env = process.env.NEXT_PUBLIC_ENV as Environment
+  if (import.meta.env.VITE_ENV) {
+    const env = import.meta.env.VITE_ENV as Environment
     if (["development", "quality", "production"].includes(env)) {
       return env
     }
@@ -109,7 +109,7 @@ export function getCurrentEnvironment(): Environment {
   }
 
   // En el servidor o por defecto
-  return process.env.NODE_ENV === "production" ? "production" : "development"
+  return import.meta.env.MODE === "production" ? "production" : "development"
 }
 
 // Obtiene la configuración para el ambiente actual
